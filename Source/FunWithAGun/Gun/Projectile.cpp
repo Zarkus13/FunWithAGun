@@ -15,7 +15,7 @@ AProjectile::AProjectile()
 	CollisionComp->InitSphereRadius(1.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
-	CollisionComp->SetRelativeScale3D(FVector(10, 1, 1));
+	CollisionComp->SetRelativeScale3D(FVector(10, 1.5f, 1.5f));
 
 	SetRootComponent(CollisionComp);
 
