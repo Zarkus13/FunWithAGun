@@ -15,8 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Setup")
-	FString ShooterName;
+	class AActor* Shooter = nullptr;
+	class AActor* Gun = nullptr;
 
 	void Launch();
 
@@ -24,13 +24,13 @@ public:
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	int32 LaunchSpeed = 5000;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Setup")
 	class USphereComponent* CollisionComp = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	class UProjectileMovementComponent* ProjectileMovement = nullptr;
-
-	
+	class UProjectileMovementComponent* ProjectileMovement = nullptr;	
 	
 };

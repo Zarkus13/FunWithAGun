@@ -26,6 +26,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void ToggleShooting();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	class USceneComponent* VRRoot = nullptr;
@@ -33,7 +35,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	class UCameraComponent* Camera = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class UChildActorComponent* Weapon = nullptr;
+
+	class AGun* Gun = nullptr;
 	
 };

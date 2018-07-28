@@ -15,8 +15,11 @@ public:
 	// Sets default values for this actor's properties
 	AGun();
 
-	UFUNCTION(BlueprintCallable, Category = "Shooting")
-	void Shoot(FString ShooterName);
+	void ToggleShooting();
+
+	void SetShooter(class AActor* Shooter);
+
+	void Shoot();
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,4 +36,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectile> ProjectileClass = nullptr;
+
+private:
+	FString ShooterName;
+	class AActor* Shooter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Shooting")
+	float FiringRate = 5;
+
+	float DeltaSecondsBetweenShots = 0;
+
+	float LastShotTime = 0.f;
+	bool IsShooting = false;
 };

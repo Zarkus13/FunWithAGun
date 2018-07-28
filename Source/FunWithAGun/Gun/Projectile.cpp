@@ -29,17 +29,17 @@ AProjectile::AProjectile()
 }
 
 void AProjectile::Launch() {
-	ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * 5000.f);
+	CollisionComp->IgnoreActorWhenMoving(Shooter, true);
+	CollisionComp->IgnoreActorWhenMoving(Gun, true);
+
+	ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * LaunchSpeed);
 	ProjectileMovement->Activate();
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != NULL && OtherActor->GetName() == ShooterName)
-		return;
-
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && OtherActor->GetName() != Shooter->GetName())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 1.f, GetActorLocation());
 	}

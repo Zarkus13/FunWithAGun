@@ -27,6 +27,7 @@ void AGun::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DeltaSecondsBetweenShots = 1.f / FiringRate;
 }
 
 // Called every frame
@@ -34,22 +35,42 @@ void AGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsShooting)
+		Shoot();
 }
 
-void AGun::Shoot(FString ShooterName) {
+void AGun::ToggleShooting() {
+	IsShooting = !IsShooting;
+}
+
+void AGun::Shoot() {
 	UWorld* const World = GetWorld();
 
 	if (World) {
-		auto ProjectileSpawnLocation = GunMesh->GetSocketLocation("Projectile");
-		auto ProjectileSpawnRotation = GunMesh->GetSocketRotation("Projectile");
+		auto SecondsFromLastShot = World->TimeSeconds - LastShotTime;
 
-		auto Projectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnLocation, ProjectileSpawnRotation);
+		if (SecondsFromLastShot >= DeltaSecondsBetweenShots) {
+			auto ProjectileSpawnLocation = GunMesh->GetSocketLocation("Projectile");
+			auto ProjectileSpawnRotation = GunMesh->GetSocketRotation("Projectile");
 
-		if (Projectile) {
-			Projectile->ShooterName = ShooterName;
+			auto Projectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnLocation, ProjectileSpawnRotation);
 
-			Projectile->Launch();
+			if (Projectile) {
+				Projectile->Shooter = Shooter;
+				Projectile->Gun = this;
+
+				Projectile->Launch();
+
+				LastShotTime = World->TimeSeconds;
+			}
 		}
 	}
 }
 
+
+
+// GETTERS AND SETTERS
+void AGun::SetShooter(AActor* Shooter)
+{
+	this->Shooter = Shooter;
+}

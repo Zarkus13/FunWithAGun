@@ -3,6 +3,9 @@
 #include "VRCharacter.h"
 #include "Components/ChildActorComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/InputComponent.h"
+#include "Gun/Gun.h"
+#include "UObject/Class.h"
 
 
 // Sets default values
@@ -25,7 +28,20 @@ AVRCharacter::AVRCharacter()
 void AVRCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	auto ChildActor = Weapon->GetChildActor();
+
+	Gun = Cast<AGun>(Weapon->GetChildActor());
+
+	if (Gun)
+		Gun->SetShooter(this);
+}
+
+// Called every frame
+void AVRCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
 	auto NewCameraOffset = Camera->GetComponentLocation() - GetActorLocation();
 	NewCameraOffset.Z = 0;
 
@@ -34,17 +50,17 @@ void AVRCharacter::BeginPlay()
 	VRRoot->AddWorldOffset(-NewCameraOffset);
 }
 
-// Called every frame
-void AVRCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 // Called to bind functionality to input
 void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &AVRCharacter::ToggleShooting);
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &AVRCharacter::ToggleShooting);
 }
 
+void AVRCharacter::ToggleShooting()
+{
+	if (Gun)
+		Gun->ToggleShooting();
+}
